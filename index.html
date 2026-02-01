@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Don4Get Reminder Bot - Never Forget Anything</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">
+                <img src="logo.png" alt="Don4Get Reminder">
+                <span>Don4Get Reminder</span>
+            </a>
+            <button class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#examples" class="nav-link">Examples</a></li>
+                <li><a href="#commands" class="nav-link">Commands</a></li>
+                <li><a href="https://t.me/don4get_bot" class="nav-link nav-cta" target="_blank">Start Bot</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <img src="logo.png" alt="Don4Get Reminder Bot" class="hero-logo">
+                <div class="hero-text">
+                    <h1>Don4Get Reminder Bot</h1>
+                    <p class="hero-subtitle">Forward any message. Set a time. Get reminded.</p>
+                    <p class="hero-description">A simple Telegram bot that turns any message into a reminder. No apps to install, no accounts to create. Just forward and forget.</p>
+                    <a href="https://t.me/don4get_bot" class="btn btn-primary" target="_blank">Start Using Now</a>
+                </div>
+            </div>
+
+            <div class="screenshots">
+                <div class="screenshot-item screenshot-portrait">
+                    <img src="screenshots/screen1.jpg" alt="Creating a reminder">
+                    <span>Create reminder</span>
+                </div>
+                <div class="screenshot-item screenshot-landscape">
+                    <img src="screenshots/screen2.jpg" alt="Reminder notification">
+                    <span>Get notified</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#128172;</div>
+                    <h3>Any Message</h3>
+                    <p>Forward messages, send text, images, files, voice notes - anything becomes a reminder.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#9200;</div>
+                    <h3>Quick Presets</h3>
+                    <p>One-tap buttons for common times: 30 min, 1 hour, 2pm, tomorrow, next week.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128483;</div>
+                    <h3>Natural Language</h3>
+                    <p>Type "tomorrow at 3pm" or "in 2 hours" - the bot understands you.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#127760;</div>
+                    <h3>Your Timezone</h3>
+                    <p>Set your timezone once and all reminders work in your local time.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128276;</div>
+                    <h3>Snooze & Postpone</h3>
+                    <p>Not ready? Postpone any reminder with a single tap.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128221;</div>
+                    <h3>Manage Easily</h3>
+                    <p>View, edit, or delete your reminders anytime with /reminders command.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Send or Forward</h3>
+                        <p>Send any message to the bot or forward a message you want to be reminded about.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Pick a Time</h3>
+                        <p>Choose from preset buttons or type a custom time like "friday 5pm".</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Get Reminded</h3>
+                        <p>The bot sends you the message at the scheduled time with options to mark done or postpone.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="examples" id="examples">
+        <div class="container">
+            <h2>Usage Examples</h2>
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-header">
+                        <span class="example-tag">Task Reminder</span>
+                    </div>
+                    <div class="example-chat">
+                        <div class="chat-message user">
+                            <span>Call dentist to schedule appointment</span>
+                        </div>
+                        <div class="chat-message bot">
+                            <span>When should I remind you?</span>
+                            <div class="chat-buttons">
+                                <span class="chat-btn">30 min</span>
+                                <span class="chat-btn">1 hour</span>
+                                <span class="chat-btn selected">tomorrow</span>
+                            </div>
+                        </div>
+                        <div class="chat-message bot success">
+                            <span>Reminder set for tomorrow at 9:00 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <span class="example-tag">Forwarded Message</span>
+                    </div>
+                    <div class="example-chat">
+                        <div class="chat-message user forwarded">
+                            <span class="forward-label">Forwarded from John</span>
+                            <span>Meeting link: zoom.us/j/123456</span>
+                        </div>
+                        <div class="chat-message bot">
+                            <span>When should I remind you?</span>
+                            <div class="chat-buttons">
+                                <span class="chat-btn">2pm</span>
+                                <span class="chat-btn selected">7pm</span>
+                                <span class="chat-btn">manual</span>
+                            </div>
+                        </div>
+                        <div class="chat-message bot success">
+                            <span>Reminder set for today at 7:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <span class="example-tag">Natural Language</span>
+                    </div>
+                    <div class="example-chat">
+                        <div class="chat-message user">
+                            <span>Buy groceries</span>
+                        </div>
+                        <div class="chat-message bot">
+                            <span>When should I remind you?</span>
+                            <div class="chat-buttons">
+                                <span class="chat-btn">30 min</span>
+                                <span class="chat-btn">1 hour</span>
+                                <span class="chat-btn selected">manual</span>
+                            </div>
+                        </div>
+                        <div class="chat-message user">
+                            <span>saturday 11am</span>
+                        </div>
+                        <div class="chat-message bot success">
+                            <span>Reminder set for Saturday at 11:00 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <span class="example-tag">Reminder Notification</span>
+                    </div>
+                    <div class="example-chat">
+                        <div class="chat-message bot reminder">
+                            <span class="reminder-label">Reminder</span>
+                            <span>Call dentist to schedule appointment</span>
+                            <div class="chat-buttons">
+                                <span class="chat-btn success-btn">Done</span>
+                                <span class="chat-btn">Postpone</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="commands" id="commands">
+        <div class="container">
+            <h2>Bot Commands</h2>
+            <div class="commands-list">
+                <div class="command-item">
+                    <code>/start</code>
+                    <p>Welcome message with instructions on how to use the bot</p>
+                </div>
+                <div class="command-item">
+                    <code>/reminders</code>
+                    <p>View all your pending reminders with options to edit or delete</p>
+                </div>
+                <div class="command-item">
+                    <code>/timezone</code>
+                    <p>Set your timezone for accurate reminder times</p>
+                </div>
+                <div class="command-item">
+                    <code>/format</code>
+                    <p>Switch between 12-hour and 24-hour time format</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta" id="cta">
+        <div class="container">
+            <h2>Start Remembering Everything</h2>
+            <p>No sign-up required. Just open Telegram and start chatting.</p>
+            <a href="https://t.me/don4get_bot" class="btn btn-primary btn-large" target="_blank">Open in Telegram</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Don4Get Reminder Bot. Built with &#10084; for Telegram.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
