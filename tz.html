@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timezone List - Don4Get Reminder Bot</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .tz-page {
+            min-height: 100vh;
+            padding: 100px 20px 60px;
+            background: var(--bg-dark);
+        }
+
+        .tz-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .tz-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .tz-header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            padding-left: 50px;
+            font-size: 1rem;
+            border: 2px solid var(--bg-lighter);
+            border-radius: 12px;
+            background: var(--bg-light);
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .tz-count {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .tz-table-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--bg-light);
+            border-radius: 16px;
+            overflow-x: auto;
+        }
+
+        .tz-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .tz-table th {
+            background: var(--bg-lighter);
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        .tz-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--bg-lighter);
+        }
+
+        .tz-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tz-table tr:hover td {
+            background: rgba(0, 136, 204, 0.1);
+        }
+
+        .tz-name {
+            font-family: 'SF Mono', Monaco, 'Consolas', monospace;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .tz-region {
+            color: var(--primary);
+        }
+
+        .country-code {
+            display: inline-block;
+            background: var(--bg-lighter);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-right: 8px;
+        }
+
+        .country-name {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .utc-offset {
+            font-family: 'SF Mono', Monaco, 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .utc-offset.positive {
+            color: var(--accent-green);
+        }
+
+        .utc-offset.negative {
+            color: #e74c3c;
+        }
+
+        .utc-offset.zero {
+            color: var(--text-secondary);
+        }
+
+        .copy-btn {
+            background: var(--bg-lighter);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-green);
+            color: var(--text-primary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-bottom: 30px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .no-results p {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 900px) {
+            .tz-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .tz-table th,
+            .tz-table td {
+                padding: 10px 8px;
+            }
+
+            .tz-name {
+                font-size: 0.8rem;
+            }
+
+            .copy-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .country-code {
+                font-size: 0.7rem;
+                padding: 2px 6px;
+            }
+
+            .country-name {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="logo.png" alt="Don4Get Reminder">
+                <span>Don4Get Reminder</span>
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="https://t.me/don4get_bot" class="nav-link nav-cta" target="_blank">Start Bot</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="tz-page">
+        <div class="container">
+            <a href="index.html" class="back-link">&#8592; Back to Home</a>
+
+            <div class="tz-header">
+                <h1>Timezone List</h1>
+                <p>Find your timezone identifier to use with the /timezone command. Search by city, country, or country code.</p>
+            </div>
+
+            <div class="search-container">
+                <span class="search-icon">&#128269;</span>
+                <input type="text" class="search-input" id="search" placeholder="Search by timezone, country code, or country name...">
+            </div>
+
+            <p class="tz-count"><span id="count">0</span> timezones</p>
+
+            <div class="tz-table-container">
+                <table class="tz-table">
+                    <thead>
+                        <tr>
+                            <th>Timezone Identifier</th>
+                            <th>Country</th>
+                            <th>UTC (STD)</th>
+                            <th>UTC (DST)</th>
+                            <th style="width: 70px; text-align: center;">Copy</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tz-body">
+                    </tbody>
+                </table>
+                <div class="no-results" id="no-results" style="display: none;">
+                    <p>No timezones found matching your search.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Don4Get Reminder Bot. Built with &#10084; for Telegram.</p>
+        </div>
+    </footer>
+
+    <script>
+        const timezones = [
+            { tz: "Africa/Abidjan", codes: ["CI"], countries: ["Ivory Coast"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Accra", codes: ["GH"], countries: ["Ghana"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Addis_Ababa", codes: ["ET"], countries: ["Ethiopia"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Africa/Algiers", codes: ["DZ"], countries: ["Algeria"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Asmara", codes: ["ER"], countries: ["Eritrea"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Africa/Bamako", codes: ["ML"], countries: ["Mali"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Bangui", codes: ["CF"], countries: ["Central African Republic"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Banjul", codes: ["GM"], countries: ["Gambia"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Bissau", codes: ["GW"], countries: ["Guinea-Bissau"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Blantyre", codes: ["MW"], countries: ["Malawi"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Brazzaville", codes: ["CG"], countries: ["Congo"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Bujumbura", codes: ["BI"], countries: ["Burundi"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Cairo", codes: ["EG"], countries: ["Egypt"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Africa/Casablanca", codes: ["MA"], countries: ["Morocco"], sdt: "+01:00", dst: "+00:00" },
+            { tz: "Africa/Ceuta", codes: ["ES"], countries: ["Spain"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Africa/Conakry", codes: ["GN"], countries: ["Guinea"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Dakar", codes: ["SN"], countries: ["Senegal"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Dar_es_Salaam", codes: ["TZ"], countries: ["Tanzania"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Africa/Djibouti", codes: ["DJ"], countries: ["Djibouti"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Africa/Douala", codes: ["CM"], countries: ["Cameroon"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/El_Aaiun", codes: ["EH"], countries: ["Western Sahara"], sdt: "+01:00", dst: "+00:00" },
+            { tz: "Africa/Freetown", codes: ["SL"], countries: ["Sierra Leone"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Gaborone", codes: ["BW"], countries: ["Botswana"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Harare", codes: ["ZW"], countries: ["Zimbabwe"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Johannesburg", codes: ["ZA"], countries: ["South Africa"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Juba", codes: ["SS"], countries: ["South Sudan"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Kampala", codes: ["UG"], countries: ["Uganda"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Africa/Khartoum", codes: ["SD"], countries: ["Sudan"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Kigali", codes: ["RW"], countries: ["Rwanda"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Kinshasa", codes: ["CD"], countries: ["DR Congo"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Lagos", codes: ["NG"], countries: ["Nigeria"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Libreville", codes: ["GA"], countries: ["Gabon"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Lome", codes: ["TG"], countries: ["Togo"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Luanda", codes: ["AO"], countries: ["Angola"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Lubumbashi", codes: ["CD"], countries: ["DR Congo"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Lusaka", codes: ["ZM"], countries: ["Zambia"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Malabo", codes: ["GQ"], countries: ["Equatorial Guinea"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Maputo", codes: ["MZ"], countries: ["Mozambique"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Maseru", codes: ["LS"], countries: ["Lesotho"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Mbabane", codes: ["SZ"], countries: ["Eswatini"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Mogadishu", codes: ["SO"], countries: ["Somalia"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Africa/Monrovia", codes: ["LR"], countries: ["Liberia"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Nairobi", codes: ["KE"], countries: ["Kenya"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Africa/Ndjamena", codes: ["TD"], countries: ["Chad"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Niamey", codes: ["NE"], countries: ["Niger"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Nouakchott", codes: ["MR"], countries: ["Mauritania"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Ouagadougou", codes: ["BF"], countries: ["Burkina Faso"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Porto-Novo", codes: ["BJ"], countries: ["Benin"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Sao_Tome", codes: ["ST"], countries: ["Sao Tome and Principe"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Africa/Tripoli", codes: ["LY"], countries: ["Libya"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Africa/Tunis", codes: ["TN"], countries: ["Tunisia"], sdt: "+01:00", dst: "+01:00" },
+            { tz: "Africa/Windhoek", codes: ["NA"], countries: ["Namibia"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "America/Adak", codes: ["US"], countries: ["United States"], sdt: "-10:00", dst: "-09:00" },
+            { tz: "America/Anchorage", codes: ["US"], countries: ["United States"], sdt: "-09:00", dst: "-08:00" },
+            { tz: "America/Anguilla", codes: ["AI"], countries: ["Anguilla"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Antigua", codes: ["AG"], countries: ["Antigua and Barbuda"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Araguaina", codes: ["BR"], countries: ["Brazil"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/Buenos_Aires", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/Catamarca", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/Cordoba", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/Jujuy", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/La_Rioja", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/Mendoza", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/Rio_Gallegos", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/Salta", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/San_Juan", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/San_Luis", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/Tucuman", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Argentina/Ushuaia", codes: ["AR"], countries: ["Argentina"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Aruba", codes: ["AW"], countries: ["Aruba"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Asuncion", codes: ["PY"], countries: ["Paraguay"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Atikokan", codes: ["CA"], countries: ["Canada"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/Bahia", codes: ["BR"], countries: ["Brazil"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Bahia_Banderas", codes: ["MX"], countries: ["Mexico"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Barbados", codes: ["BB"], countries: ["Barbados"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Belem", codes: ["BR"], countries: ["Brazil"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Belize", codes: ["BZ"], countries: ["Belize"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Blanc-Sablon", codes: ["CA"], countries: ["Canada"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Boa_Vista", codes: ["BR"], countries: ["Brazil"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Bogota", codes: ["CO"], countries: ["Colombia"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/Boise", codes: ["US"], countries: ["United States"], sdt: "-07:00", dst: "-06:00" },
+            { tz: "America/Cambridge_Bay", codes: ["CA"], countries: ["Canada"], sdt: "-07:00", dst: "-06:00" },
+            { tz: "America/Campo_Grande", codes: ["BR"], countries: ["Brazil"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Cancun", codes: ["MX"], countries: ["Mexico"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/Caracas", codes: ["VE"], countries: ["Venezuela"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Cayenne", codes: ["GF"], countries: ["French Guiana"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Cayman", codes: ["KY"], countries: ["Cayman Islands"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/Chicago", codes: ["US"], countries: ["United States"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Chihuahua", codes: ["MX"], countries: ["Mexico"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Ciudad_Juarez", codes: ["MX"], countries: ["Mexico"], sdt: "-07:00", dst: "-06:00" },
+            { tz: "America/Costa_Rica", codes: ["CR"], countries: ["Costa Rica"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Coyhaique", codes: ["CL"], countries: ["Chile"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Creston", codes: ["CA"], countries: ["Canada"], sdt: "-07:00", dst: "-07:00" },
+            { tz: "America/Cuiaba", codes: ["BR"], countries: ["Brazil"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Curacao", codes: ["CW"], countries: ["Curacao"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Danmarkshavn", codes: ["GL"], countries: ["Greenland"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "America/Dawson", codes: ["CA"], countries: ["Canada"], sdt: "-07:00", dst: "-07:00" },
+            { tz: "America/Dawson_Creek", codes: ["CA"], countries: ["Canada"], sdt: "-07:00", dst: "-07:00" },
+            { tz: "America/Denver", codes: ["US"], countries: ["United States"], sdt: "-07:00", dst: "-06:00" },
+            { tz: "America/Detroit", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Dominica", codes: ["DM"], countries: ["Dominica"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Edmonton", codes: ["CA"], countries: ["Canada"], sdt: "-07:00", dst: "-06:00" },
+            { tz: "America/Eirunepe", codes: ["BR"], countries: ["Brazil"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/El_Salvador", codes: ["SV"], countries: ["El Salvador"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Fort_Nelson", codes: ["CA"], countries: ["Canada"], sdt: "-07:00", dst: "-07:00" },
+            { tz: "America/Fortaleza", codes: ["BR"], countries: ["Brazil"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Glace_Bay", codes: ["CA"], countries: ["Canada"], sdt: "-04:00", dst: "-03:00" },
+            { tz: "America/Goose_Bay", codes: ["CA"], countries: ["Canada"], sdt: "-04:00", dst: "-03:00" },
+            { tz: "America/Grand_Turk", codes: ["TC"], countries: ["Turks and Caicos"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Grenada", codes: ["GD"], countries: ["Grenada"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Guadeloupe", codes: ["GP"], countries: ["Guadeloupe"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Guatemala", codes: ["GT"], countries: ["Guatemala"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Guayaquil", codes: ["EC"], countries: ["Ecuador"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/Guyana", codes: ["GY"], countries: ["Guyana"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Halifax", codes: ["CA"], countries: ["Canada"], sdt: "-04:00", dst: "-03:00" },
+            { tz: "America/Havana", codes: ["CU"], countries: ["Cuba"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Hermosillo", codes: ["MX"], countries: ["Mexico"], sdt: "-07:00", dst: "-07:00" },
+            { tz: "America/Indiana/Indianapolis", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Indiana/Knox", codes: ["US"], countries: ["United States"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Indiana/Marengo", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Indiana/Petersburg", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Indiana/Tell_City", codes: ["US"], countries: ["United States"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Indiana/Vevay", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Indiana/Vincennes", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Indiana/Winamac", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Inuvik", codes: ["CA"], countries: ["Canada"], sdt: "-07:00", dst: "-06:00" },
+            { tz: "America/Iqaluit", codes: ["CA"], countries: ["Canada"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Jamaica", codes: ["JM"], countries: ["Jamaica"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/Juneau", codes: ["US"], countries: ["United States"], sdt: "-09:00", dst: "-08:00" },
+            { tz: "America/Kentucky/Louisville", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Kentucky/Monticello", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Kralendijk", codes: ["BQ"], countries: ["Caribbean Netherlands"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/La_Paz", codes: ["BO"], countries: ["Bolivia"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Lima", codes: ["PE"], countries: ["Peru"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/Los_Angeles", codes: ["US"], countries: ["United States"], sdt: "-08:00", dst: "-07:00" },
+            { tz: "America/Lower_Princes", codes: ["SX"], countries: ["Sint Maarten"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Maceio", codes: ["BR"], countries: ["Brazil"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Managua", codes: ["NI"], countries: ["Nicaragua"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Manaus", codes: ["BR"], countries: ["Brazil"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Marigot", codes: ["MF"], countries: ["Saint Martin"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Martinique", codes: ["MQ"], countries: ["Martinique"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Matamoros", codes: ["MX"], countries: ["Mexico"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Mazatlan", codes: ["MX"], countries: ["Mexico"], sdt: "-07:00", dst: "-07:00" },
+            { tz: "America/Menominee", codes: ["US"], countries: ["United States"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Merida", codes: ["MX"], countries: ["Mexico"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Metlakatla", codes: ["US"], countries: ["United States"], sdt: "-09:00", dst: "-08:00" },
+            { tz: "America/Mexico_City", codes: ["MX"], countries: ["Mexico"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Miquelon", codes: ["PM"], countries: ["Saint Pierre and Miquelon"], sdt: "-03:00", dst: "-02:00" },
+            { tz: "America/Moncton", codes: ["CA"], countries: ["Canada"], sdt: "-04:00", dst: "-03:00" },
+            { tz: "America/Monterrey", codes: ["MX"], countries: ["Mexico"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Montevideo", codes: ["UY"], countries: ["Uruguay"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Montserrat", codes: ["MS"], countries: ["Montserrat"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Nassau", codes: ["BS"], countries: ["Bahamas"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/New_York", codes: ["US"], countries: ["United States"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Nipigon", codes: ["CA"], countries: ["Canada"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Nome", codes: ["US"], countries: ["United States"], sdt: "-09:00", dst: "-08:00" },
+            { tz: "America/Noronha", codes: ["BR"], countries: ["Brazil"], sdt: "-02:00", dst: "-02:00" },
+            { tz: "America/North_Dakota/Beulah", codes: ["US"], countries: ["United States"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/North_Dakota/Center", codes: ["US"], countries: ["United States"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/North_Dakota/New_Salem", codes: ["US"], countries: ["United States"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Nuuk", codes: ["GL"], countries: ["Greenland"], sdt: "-02:00", dst: "-01:00" },
+            { tz: "America/Ojinaga", codes: ["MX"], countries: ["Mexico"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Panama", codes: ["PA"], countries: ["Panama"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/Pangnirtung", codes: ["CA"], countries: ["Canada"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Paramaribo", codes: ["SR"], countries: ["Suriname"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Phoenix", codes: ["US"], countries: ["United States"], sdt: "-07:00", dst: "-07:00" },
+            { tz: "America/Port-au-Prince", codes: ["HT"], countries: ["Haiti"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Port_of_Spain", codes: ["TT"], countries: ["Trinidad and Tobago"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Porto_Velho", codes: ["BR"], countries: ["Brazil"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Puerto_Rico", codes: ["PR"], countries: ["Puerto Rico"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Punta_Arenas", codes: ["CL"], countries: ["Chile"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Rainy_River", codes: ["CA"], countries: ["Canada"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Rankin_Inlet", codes: ["CA"], countries: ["Canada"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Recife", codes: ["BR"], countries: ["Brazil"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Regina", codes: ["CA"], countries: ["Canada"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Resolute", codes: ["CA"], countries: ["Canada"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Rio_Branco", codes: ["BR"], countries: ["Brazil"], sdt: "-05:00", dst: "-05:00" },
+            { tz: "America/Santarem", codes: ["BR"], countries: ["Brazil"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Santiago", codes: ["CL"], countries: ["Chile"], sdt: "-04:00", dst: "-03:00" },
+            { tz: "America/Santo_Domingo", codes: ["DO"], countries: ["Dominican Republic"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Sao_Paulo", codes: ["BR"], countries: ["Brazil"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "America/Scoresbysund", codes: ["GL"], countries: ["Greenland"], sdt: "-02:00", dst: "-01:00" },
+            { tz: "America/Sitka", codes: ["US"], countries: ["United States"], sdt: "-09:00", dst: "-08:00" },
+            { tz: "America/St_Barthelemy", codes: ["BL"], countries: ["Saint Barthelemy"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/St_Johns", codes: ["CA"], countries: ["Canada"], sdt: "-03:30", dst: "-02:30" },
+            { tz: "America/St_Kitts", codes: ["KN"], countries: ["Saint Kitts and Nevis"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/St_Lucia", codes: ["LC"], countries: ["Saint Lucia"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/St_Thomas", codes: ["VI"], countries: ["US Virgin Islands"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/St_Vincent", codes: ["VC"], countries: ["Saint Vincent and the Grenadines"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Swift_Current", codes: ["CA"], countries: ["Canada"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Tegucigalpa", codes: ["HN"], countries: ["Honduras"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "America/Thule", codes: ["GL"], countries: ["Greenland"], sdt: "-04:00", dst: "-03:00" },
+            { tz: "America/Thunder_Bay", codes: ["CA"], countries: ["Canada"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Tijuana", codes: ["MX"], countries: ["Mexico"], sdt: "-08:00", dst: "-07:00" },
+            { tz: "America/Toronto", codes: ["CA"], countries: ["Canada"], sdt: "-05:00", dst: "-04:00" },
+            { tz: "America/Tortola", codes: ["VG"], countries: ["British Virgin Islands"], sdt: "-04:00", dst: "-04:00" },
+            { tz: "America/Vancouver", codes: ["CA"], countries: ["Canada"], sdt: "-08:00", dst: "-07:00" },
+            { tz: "America/Whitehorse", codes: ["CA"], countries: ["Canada"], sdt: "-07:00", dst: "-07:00" },
+            { tz: "America/Winnipeg", codes: ["CA"], countries: ["Canada"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "America/Yakutat", codes: ["US"], countries: ["United States"], sdt: "-09:00", dst: "-08:00" },
+            { tz: "America/Yellowknife", codes: ["CA"], countries: ["Canada"], sdt: "-07:00", dst: "-06:00" },
+            { tz: "Antarctica/Casey", codes: ["AQ"], countries: ["Antarctica"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Antarctica/Davis", codes: ["AQ"], countries: ["Antarctica"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Antarctica/DumontDUrville", codes: ["AQ"], countries: ["Antarctica"], sdt: "+10:00", dst: "+10:00" },
+            { tz: "Antarctica/Macquarie", codes: ["AU"], countries: ["Australia"], sdt: "+10:00", dst: "+11:00" },
+            { tz: "Antarctica/Mawson", codes: ["AQ"], countries: ["Antarctica"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Antarctica/McMurdo", codes: ["AQ"], countries: ["Antarctica"], sdt: "+12:00", dst: "+13:00" },
+            { tz: "Antarctica/Palmer", codes: ["AQ"], countries: ["Antarctica"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "Antarctica/Rothera", codes: ["AQ"], countries: ["Antarctica"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "Antarctica/Syowa", codes: ["AQ"], countries: ["Antarctica"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Antarctica/Troll", codes: ["AQ"], countries: ["Antarctica"], sdt: "+00:00", dst: "+02:00" },
+            { tz: "Antarctica/Vostok", codes: ["AQ"], countries: ["Antarctica"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Arctic/Longyearbyen", codes: ["SJ"], countries: ["Svalbard"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Asia/Aden", codes: ["YE"], countries: ["Yemen"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Asia/Almaty", codes: ["KZ"], countries: ["Kazakhstan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Amman", codes: ["JO"], countries: ["Jordan"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Asia/Anadyr", codes: ["RU"], countries: ["Russia"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "Asia/Aqtau", codes: ["KZ"], countries: ["Kazakhstan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Aqtobe", codes: ["KZ"], countries: ["Kazakhstan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Ashgabat", codes: ["TM"], countries: ["Turkmenistan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Atyrau", codes: ["KZ"], countries: ["Kazakhstan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Baghdad", codes: ["IQ"], countries: ["Iraq"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Asia/Bahrain", codes: ["BH"], countries: ["Bahrain"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Asia/Baku", codes: ["AZ"], countries: ["Azerbaijan"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Asia/Bangkok", codes: ["TH"], countries: ["Thailand"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Barnaul", codes: ["RU"], countries: ["Russia"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Beirut", codes: ["LB"], countries: ["Lebanon"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Asia/Bishkek", codes: ["KG"], countries: ["Kyrgyzstan"], sdt: "+06:00", dst: "+06:00" },
+            { tz: "Asia/Brunei", codes: ["BN"], countries: ["Brunei"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Chita", codes: ["RU"], countries: ["Russia"], sdt: "+09:00", dst: "+09:00" },
+            { tz: "Asia/Choibalsan", codes: ["MN"], countries: ["Mongolia"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Colombo", codes: ["LK"], countries: ["Sri Lanka"], sdt: "+05:30", dst: "+05:30" },
+            { tz: "Asia/Damascus", codes: ["SY"], countries: ["Syria"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Asia/Dhaka", codes: ["BD"], countries: ["Bangladesh"], sdt: "+06:00", dst: "+06:00" },
+            { tz: "Asia/Dili", codes: ["TL"], countries: ["Timor-Leste"], sdt: "+09:00", dst: "+09:00" },
+            { tz: "Asia/Dubai", codes: ["AE"], countries: ["United Arab Emirates"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Asia/Dushanbe", codes: ["TJ"], countries: ["Tajikistan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Famagusta", codes: ["CY"], countries: ["Cyprus"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Asia/Gaza", codes: ["PS"], countries: ["Palestine"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Asia/Hebron", codes: ["PS"], countries: ["Palestine"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Asia/Ho_Chi_Minh", codes: ["VN"], countries: ["Vietnam"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Hong_Kong", codes: ["HK"], countries: ["Hong Kong"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Hovd", codes: ["MN"], countries: ["Mongolia"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Irkutsk", codes: ["RU"], countries: ["Russia"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Jakarta", codes: ["ID"], countries: ["Indonesia"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Jayapura", codes: ["ID"], countries: ["Indonesia"], sdt: "+09:00", dst: "+09:00" },
+            { tz: "Asia/Jerusalem", codes: ["IL"], countries: ["Israel"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Asia/Kabul", codes: ["AF"], countries: ["Afghanistan"], sdt: "+04:30", dst: "+04:30" },
+            { tz: "Asia/Kamchatka", codes: ["RU"], countries: ["Russia"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "Asia/Karachi", codes: ["PK"], countries: ["Pakistan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Kathmandu", codes: ["NP"], countries: ["Nepal"], sdt: "+05:45", dst: "+05:45" },
+            { tz: "Asia/Khandyga", codes: ["RU"], countries: ["Russia"], sdt: "+09:00", dst: "+09:00" },
+            { tz: "Asia/Kolkata", codes: ["IN"], countries: ["India"], sdt: "+05:30", dst: "+05:30" },
+            { tz: "Asia/Krasnoyarsk", codes: ["RU"], countries: ["Russia"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Kuala_Lumpur", codes: ["MY"], countries: ["Malaysia"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Kuching", codes: ["MY"], countries: ["Malaysia"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Kuwait", codes: ["KW"], countries: ["Kuwait"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Asia/Macau", codes: ["MO"], countries: ["Macau"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Magadan", codes: ["RU"], countries: ["Russia"], sdt: "+11:00", dst: "+11:00" },
+            { tz: "Asia/Makassar", codes: ["ID"], countries: ["Indonesia"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Manila", codes: ["PH"], countries: ["Philippines"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Muscat", codes: ["OM"], countries: ["Oman"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Asia/Nicosia", codes: ["CY"], countries: ["Cyprus"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Asia/Novokuznetsk", codes: ["RU"], countries: ["Russia"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Novosibirsk", codes: ["RU"], countries: ["Russia"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Omsk", codes: ["RU"], countries: ["Russia"], sdt: "+06:00", dst: "+06:00" },
+            { tz: "Asia/Oral", codes: ["KZ"], countries: ["Kazakhstan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Phnom_Penh", codes: ["KH"], countries: ["Cambodia"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Pontianak", codes: ["ID"], countries: ["Indonesia"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Pyongyang", codes: ["KP"], countries: ["North Korea"], sdt: "+09:00", dst: "+09:00" },
+            { tz: "Asia/Qatar", codes: ["QA"], countries: ["Qatar"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Asia/Qostanay", codes: ["KZ"], countries: ["Kazakhstan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Qyzylorda", codes: ["KZ"], countries: ["Kazakhstan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Riyadh", codes: ["SA"], countries: ["Saudi Arabia"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Asia/Sakhalin", codes: ["RU"], countries: ["Russia"], sdt: "+11:00", dst: "+11:00" },
+            { tz: "Asia/Samarkand", codes: ["UZ"], countries: ["Uzbekistan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Seoul", codes: ["KR"], countries: ["South Korea"], sdt: "+09:00", dst: "+09:00" },
+            { tz: "Asia/Shanghai", codes: ["CN"], countries: ["China"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Singapore", codes: ["SG"], countries: ["Singapore"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Srednekolymsk", codes: ["RU"], countries: ["Russia"], sdt: "+11:00", dst: "+11:00" },
+            { tz: "Asia/Taipei", codes: ["TW"], countries: ["Taiwan"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Tashkent", codes: ["UZ"], countries: ["Uzbekistan"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Tbilisi", codes: ["GE"], countries: ["Georgia"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Asia/Tehran", codes: ["IR"], countries: ["Iran"], sdt: "+03:30", dst: "+03:30" },
+            { tz: "Asia/Thimphu", codes: ["BT"], countries: ["Bhutan"], sdt: "+06:00", dst: "+06:00" },
+            { tz: "Asia/Tokyo", codes: ["JP"], countries: ["Japan"], sdt: "+09:00", dst: "+09:00" },
+            { tz: "Asia/Tomsk", codes: ["RU"], countries: ["Russia"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Ulaanbaatar", codes: ["MN"], countries: ["Mongolia"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Asia/Urumqi", codes: ["CN"], countries: ["China"], sdt: "+06:00", dst: "+06:00" },
+            { tz: "Asia/Ust-Nera", codes: ["RU"], countries: ["Russia"], sdt: "+10:00", dst: "+10:00" },
+            { tz: "Asia/Vientiane", codes: ["LA"], countries: ["Laos"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Asia/Vladivostok", codes: ["RU"], countries: ["Russia"], sdt: "+10:00", dst: "+10:00" },
+            { tz: "Asia/Yakutsk", codes: ["RU"], countries: ["Russia"], sdt: "+09:00", dst: "+09:00" },
+            { tz: "Asia/Yangon", codes: ["MM"], countries: ["Myanmar"], sdt: "+06:30", dst: "+06:30" },
+            { tz: "Asia/Yekaterinburg", codes: ["RU"], countries: ["Russia"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Asia/Yerevan", codes: ["AM"], countries: ["Armenia"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Atlantic/Azores", codes: ["PT"], countries: ["Portugal"], sdt: "-01:00", dst: "+00:00" },
+            { tz: "Atlantic/Bermuda", codes: ["BM"], countries: ["Bermuda"], sdt: "-04:00", dst: "-03:00" },
+            { tz: "Atlantic/Canary", codes: ["ES"], countries: ["Spain"], sdt: "+00:00", dst: "+01:00" },
+            { tz: "Atlantic/Cape_Verde", codes: ["CV"], countries: ["Cape Verde"], sdt: "-01:00", dst: "-01:00" },
+            { tz: "Atlantic/Faroe", codes: ["FO"], countries: ["Faroe Islands"], sdt: "+00:00", dst: "+01:00" },
+            { tz: "Atlantic/Madeira", codes: ["PT"], countries: ["Portugal"], sdt: "+00:00", dst: "+01:00" },
+            { tz: "Atlantic/Reykjavik", codes: ["IS"], countries: ["Iceland"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Atlantic/South_Georgia", codes: ["GS"], countries: ["South Georgia"], sdt: "-02:00", dst: "-02:00" },
+            { tz: "Atlantic/St_Helena", codes: ["SH"], countries: ["Saint Helena"], sdt: "+00:00", dst: "+00:00" },
+            { tz: "Atlantic/Stanley", codes: ["FK"], countries: ["Falkland Islands"], sdt: "-03:00", dst: "-03:00" },
+            { tz: "Australia/Adelaide", codes: ["AU"], countries: ["Australia"], sdt: "+09:30", dst: "+10:30" },
+            { tz: "Australia/Brisbane", codes: ["AU"], countries: ["Australia"], sdt: "+10:00", dst: "+10:00" },
+            { tz: "Australia/Broken_Hill", codes: ["AU"], countries: ["Australia"], sdt: "+09:30", dst: "+10:30" },
+            { tz: "Australia/Darwin", codes: ["AU"], countries: ["Australia"], sdt: "+09:30", dst: "+09:30" },
+            { tz: "Australia/Eucla", codes: ["AU"], countries: ["Australia"], sdt: "+08:45", dst: "+08:45" },
+            { tz: "Australia/Hobart", codes: ["AU"], countries: ["Australia"], sdt: "+10:00", dst: "+11:00" },
+            { tz: "Australia/Lindeman", codes: ["AU"], countries: ["Australia"], sdt: "+10:00", dst: "+10:00" },
+            { tz: "Australia/Lord_Howe", codes: ["AU"], countries: ["Australia"], sdt: "+10:30", dst: "+11:00" },
+            { tz: "Australia/Melbourne", codes: ["AU"], countries: ["Australia"], sdt: "+10:00", dst: "+11:00" },
+            { tz: "Australia/Perth", codes: ["AU"], countries: ["Australia"], sdt: "+08:00", dst: "+08:00" },
+            { tz: "Australia/Sydney", codes: ["AU"], countries: ["Australia"], sdt: "+10:00", dst: "+11:00" },
+            { tz: "Europe/Amsterdam", codes: ["NL"], countries: ["Netherlands"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Andorra", codes: ["AD"], countries: ["Andorra"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Astrakhan", codes: ["RU"], countries: ["Russia"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Europe/Athens", codes: ["GR"], countries: ["Greece"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Belgrade", codes: ["RS"], countries: ["Serbia"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Berlin", codes: ["DE"], countries: ["Germany"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Bratislava", codes: ["SK"], countries: ["Slovakia"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Brussels", codes: ["BE"], countries: ["Belgium"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Bucharest", codes: ["RO"], countries: ["Romania"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Budapest", codes: ["HU"], countries: ["Hungary"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Busingen", codes: ["DE"], countries: ["Germany"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Chisinau", codes: ["MD"], countries: ["Moldova"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Copenhagen", codes: ["DK"], countries: ["Denmark"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Dublin", codes: ["IE"], countries: ["Ireland"], sdt: "+00:00", dst: "+01:00" },
+            { tz: "Europe/Gibraltar", codes: ["GI"], countries: ["Gibraltar"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Guernsey", codes: ["GG"], countries: ["Guernsey"], sdt: "+00:00", dst: "+01:00" },
+            { tz: "Europe/Helsinki", codes: ["FI"], countries: ["Finland"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Isle_of_Man", codes: ["IM"], countries: ["Isle of Man"], sdt: "+00:00", dst: "+01:00" },
+            { tz: "Europe/Istanbul", codes: ["TR"], countries: ["Turkey"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Europe/Jersey", codes: ["JE"], countries: ["Jersey"], sdt: "+00:00", dst: "+01:00" },
+            { tz: "Europe/Kaliningrad", codes: ["RU"], countries: ["Russia"], sdt: "+02:00", dst: "+02:00" },
+            { tz: "Europe/Kirov", codes: ["RU"], countries: ["Russia"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Europe/Kyiv", codes: ["UA"], countries: ["Ukraine"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Lisbon", codes: ["PT"], countries: ["Portugal"], sdt: "+00:00", dst: "+01:00" },
+            { tz: "Europe/Ljubljana", codes: ["SI"], countries: ["Slovenia"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/London", codes: ["GB"], countries: ["United Kingdom"], sdt: "+00:00", dst: "+01:00" },
+            { tz: "Europe/Luxembourg", codes: ["LU"], countries: ["Luxembourg"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Madrid", codes: ["ES"], countries: ["Spain"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Malta", codes: ["MT"], countries: ["Malta"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Mariehamn", codes: ["AX"], countries: ["Aland Islands"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Minsk", codes: ["BY"], countries: ["Belarus"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Europe/Monaco", codes: ["MC"], countries: ["Monaco"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Moscow", codes: ["RU"], countries: ["Russia"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Europe/Oslo", codes: ["NO"], countries: ["Norway"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Paris", codes: ["FR"], countries: ["France"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Podgorica", codes: ["ME"], countries: ["Montenegro"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Prague", codes: ["CZ"], countries: ["Czech Republic"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Riga", codes: ["LV"], countries: ["Latvia"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Rome", codes: ["IT"], countries: ["Italy"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Samara", codes: ["RU"], countries: ["Russia"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Europe/San_Marino", codes: ["SM"], countries: ["San Marino"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Sarajevo", codes: ["BA"], countries: ["Bosnia and Herzegovina"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Saratov", codes: ["RU"], countries: ["Russia"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Europe/Simferopol", codes: ["UA"], countries: ["Ukraine"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Europe/Skopje", codes: ["MK"], countries: ["North Macedonia"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Sofia", codes: ["BG"], countries: ["Bulgaria"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Stockholm", codes: ["SE"], countries: ["Sweden"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Tallinn", codes: ["EE"], countries: ["Estonia"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Tirane", codes: ["AL"], countries: ["Albania"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Ulyanovsk", codes: ["RU"], countries: ["Russia"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Europe/Vaduz", codes: ["LI"], countries: ["Liechtenstein"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Vatican", codes: ["VA"], countries: ["Vatican City"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Vienna", codes: ["AT"], countries: ["Austria"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Vilnius", codes: ["LT"], countries: ["Lithuania"], sdt: "+02:00", dst: "+03:00" },
+            { tz: "Europe/Volgograd", codes: ["RU"], countries: ["Russia"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Europe/Warsaw", codes: ["PL"], countries: ["Poland"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Zagreb", codes: ["HR"], countries: ["Croatia"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Europe/Zurich", codes: ["CH"], countries: ["Switzerland"], sdt: "+01:00", dst: "+02:00" },
+            { tz: "Indian/Antananarivo", codes: ["MG"], countries: ["Madagascar"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Indian/Chagos", codes: ["IO"], countries: ["British Indian Ocean Territory"], sdt: "+06:00", dst: "+06:00" },
+            { tz: "Indian/Christmas", codes: ["CX"], countries: ["Christmas Island"], sdt: "+07:00", dst: "+07:00" },
+            { tz: "Indian/Cocos", codes: ["CC"], countries: ["Cocos Islands"], sdt: "+06:30", dst: "+06:30" },
+            { tz: "Indian/Comoro", codes: ["KM"], countries: ["Comoros"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Indian/Kerguelen", codes: ["TF"], countries: ["French Southern Territories"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Indian/Mahe", codes: ["SC"], countries: ["Seychelles"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Indian/Maldives", codes: ["MV"], countries: ["Maldives"], sdt: "+05:00", dst: "+05:00" },
+            { tz: "Indian/Mauritius", codes: ["MU"], countries: ["Mauritius"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Indian/Mayotte", codes: ["YT"], countries: ["Mayotte"], sdt: "+03:00", dst: "+03:00" },
+            { tz: "Indian/Reunion", codes: ["RE"], countries: ["Reunion"], sdt: "+04:00", dst: "+04:00" },
+            { tz: "Pacific/Apia", codes: ["WS"], countries: ["Samoa"], sdt: "+13:00", dst: "+13:00" },
+            { tz: "Pacific/Auckland", codes: ["NZ"], countries: ["New Zealand"], sdt: "+12:00", dst: "+13:00" },
+            { tz: "Pacific/Bougainville", codes: ["PG"], countries: ["Papua New Guinea"], sdt: "+11:00", dst: "+11:00" },
+            { tz: "Pacific/Chatham", codes: ["NZ"], countries: ["New Zealand"], sdt: "+12:45", dst: "+13:45" },
+            { tz: "Pacific/Chuuk", codes: ["FM"], countries: ["Micronesia"], sdt: "+10:00", dst: "+10:00" },
+            { tz: "Pacific/Easter", codes: ["CL"], countries: ["Chile"], sdt: "-06:00", dst: "-05:00" },
+            { tz: "Pacific/Efate", codes: ["VU"], countries: ["Vanuatu"], sdt: "+11:00", dst: "+11:00" },
+            { tz: "Pacific/Fakaofo", codes: ["TK"], countries: ["Tokelau"], sdt: "+13:00", dst: "+13:00" },
+            { tz: "Pacific/Fiji", codes: ["FJ"], countries: ["Fiji"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "Pacific/Funafuti", codes: ["TV"], countries: ["Tuvalu"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "Pacific/Galapagos", codes: ["EC"], countries: ["Ecuador"], sdt: "-06:00", dst: "-06:00" },
+            { tz: "Pacific/Gambier", codes: ["PF"], countries: ["French Polynesia"], sdt: "-09:00", dst: "-09:00" },
+            { tz: "Pacific/Guadalcanal", codes: ["SB"], countries: ["Solomon Islands"], sdt: "+11:00", dst: "+11:00" },
+            { tz: "Pacific/Guam", codes: ["GU"], countries: ["Guam"], sdt: "+10:00", dst: "+10:00" },
+            { tz: "Pacific/Honolulu", codes: ["US"], countries: ["United States"], sdt: "-10:00", dst: "-10:00" },
+            { tz: "Pacific/Kanton", codes: ["KI"], countries: ["Kiribati"], sdt: "+13:00", dst: "+13:00" },
+            { tz: "Pacific/Kiritimati", codes: ["KI"], countries: ["Kiribati"], sdt: "+14:00", dst: "+14:00" },
+            { tz: "Pacific/Kosrae", codes: ["FM"], countries: ["Micronesia"], sdt: "+11:00", dst: "+11:00" },
+            { tz: "Pacific/Kwajalein", codes: ["MH"], countries: ["Marshall Islands"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "Pacific/Majuro", codes: ["MH"], countries: ["Marshall Islands"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "Pacific/Marquesas", codes: ["PF"], countries: ["French Polynesia"], sdt: "-09:30", dst: "-09:30" },
+            { tz: "Pacific/Midway", codes: ["UM"], countries: ["US Minor Outlying Islands"], sdt: "-11:00", dst: "-11:00" },
+            { tz: "Pacific/Nauru", codes: ["NR"], countries: ["Nauru"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "Pacific/Niue", codes: ["NU"], countries: ["Niue"], sdt: "-11:00", dst: "-11:00" },
+            { tz: "Pacific/Norfolk", codes: ["NF"], countries: ["Norfolk Island"], sdt: "+11:00", dst: "+12:00" },
+            { tz: "Pacific/Noumea", codes: ["NC"], countries: ["New Caledonia"], sdt: "+11:00", dst: "+11:00" },
+            { tz: "Pacific/Pago_Pago", codes: ["AS"], countries: ["American Samoa"], sdt: "-11:00", dst: "-11:00" },
+            { tz: "Pacific/Palau", codes: ["PW"], countries: ["Palau"], sdt: "+09:00", dst: "+09:00" },
+            { tz: "Pacific/Pitcairn", codes: ["PN"], countries: ["Pitcairn Islands"], sdt: "-08:00", dst: "-08:00" },
+            { tz: "Pacific/Pohnpei", codes: ["FM"], countries: ["Micronesia"], sdt: "+11:00", dst: "+11:00" },
+            { tz: "Pacific/Port_Moresby", codes: ["PG"], countries: ["Papua New Guinea"], sdt: "+10:00", dst: "+10:00" },
+            { tz: "Pacific/Rarotonga", codes: ["CK"], countries: ["Cook Islands"], sdt: "-10:00", dst: "-10:00" },
+            { tz: "Pacific/Saipan", codes: ["MP"], countries: ["Northern Mariana Islands"], sdt: "+10:00", dst: "+10:00" },
+            { tz: "Pacific/Tahiti", codes: ["PF"], countries: ["French Polynesia"], sdt: "-10:00", dst: "-10:00" },
+            { tz: "Pacific/Tarawa", codes: ["KI"], countries: ["Kiribati"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "Pacific/Tongatapu", codes: ["TO"], countries: ["Tonga"], sdt: "+13:00", dst: "+13:00" },
+            { tz: "Pacific/Wake", codes: ["UM"], countries: ["US Minor Outlying Islands"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "Pacific/Wallis", codes: ["WF"], countries: ["Wallis and Futuna"], sdt: "+12:00", dst: "+12:00" },
+            { tz: "UTC", codes: [], countries: ["Coordinated Universal Time"], sdt: "+00:00", dst: "+00:00" }
+        ];
+
+        const tbody = document.getElementById('tz-body');
+        const searchInput = document.getElementById('search');
+        const countEl = document.getElementById('count');
+        const noResults = document.getElementById('no-results');
+
+        function getRegion(tz) {
+            return tz.split('/')[0];
+        }
+
+        function getLocation(tz) {
+            const parts = tz.split('/').slice(1);
+            return parts.length ? parts.join('/').replace(/_/g, ' ') : tz;
+        }
+
+        function getOffsetClass(offset) {
+            if (offset.startsWith('+') && offset !== '+00:00') return 'positive';
+            if (offset.startsWith('-')) return 'negative';
+            return 'zero';
+        }
+
+        function renderTimezones(filter = '') {
+            const lowerFilter = filter.toLowerCase();
+            const filtered = timezones.filter(item =>
+                item.tz.toLowerCase().includes(lowerFilter) ||
+                item.tz.replace(/_/g, ' ').toLowerCase().includes(lowerFilter) ||
+                item.codes.some(c => c.toLowerCase().includes(lowerFilter)) ||
+                item.countries.some(c => c.toLowerCase().includes(lowerFilter)) ||
+                item.sdt.includes(filter) ||
+                item.dst.includes(filter)
+            );
+
+            countEl.textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            noResults.style.display = 'none';
+            tbody.innerHTML = filtered.map(item => `
+                <tr>
+                    <td class="tz-name">
+                        <span class="tz-region">${getRegion(item.tz)}/</span>${getLocation(item.tz)}
+                    </td>
+                    <td>
+                        ${item.codes.map(c => `<span class="country-code">${c}</span>`).join('')}
+                        <span class="country-name">${item.countries[0]}</span>
+                    </td>
+                    <td><span class="utc-offset ${getOffsetClass(item.sdt)}">${item.sdt}</span></td>
+                    <td><span class="utc-offset ${getOffsetClass(item.dst)}">${item.dst}</span></td>
+                    <td style="text-align: center;">
+                        <button class="copy-btn" data-tz="${item.tz}">Copy</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 1500);
+            });
+        }
+
+        tbody.addEventListener('click', (e) => {
+            if (e.target.classList.contains('copy-btn')) {
+                const tz = e.target.dataset.tz;
+                copyToClipboard(tz, e.target);
+            }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            renderTimezones(e.target.value);
+        });
+
+        // Initial render
+        renderTimezones();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                document.getElementById('navbar').classList.add('scrolled');
+            } else {
+                document.getElementById('navbar').classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
