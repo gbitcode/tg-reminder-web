@@ -10,6 +10,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2BZNN0JNFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-2BZNN0JNFW');
+    </script>
 </head>
 <body>
     <nav class="navbar" id="navbar">
@@ -65,12 +75,12 @@
                 <div class="feature-card">
                     <div class="feature-icon">&#128172;</div>
                     <h3>Any Message</h3>
-                    <p>Forward messages, send text, images, files, voice notes - anything becomes a reminder.</p>
+                    <p>Forward messages, send text, images, files, voice notes - anything becomes a reminder. Forward with a comment to combine both.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">&#9200;</div>
                     <h3>Quick Presets</h3>
-                    <p>One-tap buttons for common times: 30 min, 1 hour, 2pm, tomorrow, next week.</p>
+                    <p>One-tap buttons for common times: 30 min, 1 hour, 2pm, tomorrow, next week, next month.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">&#128483;</div>
@@ -78,19 +88,29 @@
                     <p>Type "tomorrow at 3pm" or "in 2 hours" - the bot understands you.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">&#127760;</div>
-                    <h3>Your Timezone</h3>
-                    <p>Set your timezone once and all reminders work in your local time.</p>
+                    <div class="feature-icon">&#128270;</div>
+                    <h3>Smart Detection</h3>
+                    <p>The bot auto-detects times mentioned in your message and suggests them as one-tap options.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">&#128276;</div>
                     <h3>Snooze & Postpone</h3>
-                    <p>Not ready? Postpone any reminder with a single tap.</p>
+                    <p>Not ready? Postpone any reminder with a single tap when it arrives.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">&#128221;</div>
-                    <h3>Manage Easily</h3>
-                    <p>View, edit, or delete your reminders anytime with /reminders command.</p>
+                    <h3>Full Dashboard</h3>
+                    <p>Browse all your reminders in a paginated interactive list. View active, expired, or completed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#9998;</div>
+                    <h3>Edit & Reschedule</h3>
+                    <p>Changed your plans? Edit the time of any pending reminder without recreating it.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#9989;</div>
+                    <h3>Complete & Track</h3>
+                    <p>Mark reminders as done one by one, or complete all expired reminders at once. View your full history.</p>
                 </div>
             </div>
         </div>
@@ -119,6 +139,13 @@
                     <div class="step-content">
                         <h3>Get Reminded</h3>
                         <p>The bot sends you the message at the scheduled time with options to mark done or postpone.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Stay in Control</h3>
+                        <p>View, edit, reschedule, or complete your reminders anytime. Browse your full history with paginated lists.</p>
                     </div>
                 </div>
             </div>
@@ -214,6 +241,49 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <span class="example-tag">Reminder List</span>
+                    </div>
+                    <div class="example-chat">
+                        <div class="chat-message bot">
+                            <span>Your active reminders:</span>
+                            <div class="chat-buttons chat-buttons-vertical">
+                                <span class="chat-btn list-btn">Call dentist &middot; Feb 7 (Sat)</span>
+                                <span class="chat-btn list-btn">Buy groceries &middot; Feb 8 (Sun)</span>
+                                <span class="chat-btn list-btn selected">Team meeting &middot; Feb 10 (Tue)</span>
+                            </div>
+                            <div class="chat-buttons">
+                                <span class="chat-btn">Show all</span>
+                                <span class="chat-btn success-btn">Complete all expired</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <span class="example-tag">Edit Reminder</span>
+                    </div>
+                    <div class="example-chat">
+                        <div class="chat-message bot">
+                            <span class="reminder-label">Team meeting</span>
+                            <span>Feb 10 (Tue), 14:00</span>
+                            <div class="chat-buttons">
+                                <span class="chat-btn">Show full text</span>
+                                <span class="chat-btn selected">Edit time</span>
+                                <span class="chat-btn success-btn">Complete</span>
+                            </div>
+                        </div>
+                        <div class="chat-message user">
+                            <span>wednesday 3pm</span>
+                        </div>
+                        <div class="chat-message bot success">
+                            <span>Reminder updated to Wed Feb 11, 15:00</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -238,6 +308,14 @@
                     <code>/format</code>
                     <p>Switch between 12-hour and 24-hour time format</p>
                 </div>
+                <div class="command-item">
+                    <code>/help</code>
+                    <p>View detailed instructions on how to use the bot</p>
+                </div>
+                <div class="command-item">
+                    <code>/cancel</code>
+                    <p>Cancel the current input operation (e.g. manual time entry)</p>
+                </div>
             </div>
         </div>
     </section>
@@ -253,7 +331,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Don4Get Reminder Bot. Built with &#10084; for Telegram.</p>
+            <p>&copy; 2025-2026 Don4Get Reminder Bot. Built with &#10084; for Telegram.</p>
         </div>
     </footer>
 
